@@ -1,0 +1,32 @@
+name: Probe transit info sources
+
+on:
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: JR East - kanto.aspx
+        run: |
+          echo "--- status ---"
+          curl -sS -o /tmp/jreast.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://traininfo.jreast.co.jp/train_info/kanto.aspx" || true
+          echo "--- first 3000 chars ---"
+          head -c 3000 /tmp/jreast.html || true
+
+      - name: JR East - possible json endpoint
+        run: |
+          curl -sS -o /tmp/jreast.json -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://traininfo.jreast.co.jp/train_info/json/kanto.json" || true
+          head -c 3000 /tmp/jreast.json || true
+
+      - name: TWR (Rinkai Line)
+        run: |
+          curl -sS -o /tmp/twr.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://www.twr.co.jp/" || true
+          echo "--- first 3000 chars ---"
+          head -c 3000 /tmp/twr.html || true
+
+      - name: Keio Bus
+        run: |
+          curl -sS -o /tmp/keio.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://www.keio-bus.com/" || true
+          echo "--- first 3000 chars ---"
+          head -c 3000 /tmp/keio.html || true
