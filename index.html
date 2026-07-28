@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通勤ルート運行情報ダッシュボード</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <header class="top">
+    <h1>🚃 通勤ルート運行情報ダッシュボード 🚌</h1>
+    <p class="sub">よく使う電車・バス路線の公式運行情報ページに、ワンタップでアクセスできます。</p>
+  </header>
+
+  <main class="cards">
+
+    <section class="card" data-route="chuo">
+      <div class="card-head">
+        <span class="icon" style="background:#f15a22">🚃</span>
+        <div>
+          <h2>JR中央線快速</h2>
+          <p class="route">国分寺 → 東京</p>
+        </div>
+      </div>
+      <p class="desc">JR東日本の公式運行情報ページで、中央線の遅延・運転見合わせ状況を確認できます。</p>
+      <a class="btn" href="https://traininfo.jreast.co.jp/train_info/kanto.aspx"
+         target="_blank" rel="noopener" data-key="chuo">
+        JR東日本 運行情報を見る ↗
+      </a>
+      <p class="last-visit" data-key="chuo">まだ確認していません</p>
+    </section>
+
+    <section class="card" data-route="rinkai">
+      <div class="card-head">
+        <span class="icon" style="background:#00a7db">🚃</span>
+        <div>
+          <h2>湘南新宿ライン / りんかい線</h2>
+          <p class="route">新宿 → 東京テレポート</p>
+        </div>
+      </div>
+      <p class="desc">新宿〜大崎はJR湘南新宿ライン、大崎〜東京テレポートはりんかい線（東京臨海高速鉄道）です。運行会社が異なるため、それぞれの公式ページを確認してください。</p>
+      <a class="btn" href="https://traininfo.jreast.co.jp/train_info/kanto.aspx"
+         target="_blank" rel="noopener" data-key="shonan">
+        JR東日本 運行情報（湘南新宿ライン）↗
+      </a>
+      <a class="btn secondary" href="https://www.twr.co.jp/"
+         target="_blank" rel="noopener" data-key="rinkai">
+        りんかい線（TWR）運行情報 ↗
+      </a>
+      <p class="last-visit" data-key="shonan">まだ確認していません</p>
+      <p class="last-visit" data-key="rinkai">まだ確認していません</p>
+    </section>
+
+    <section class="card" data-route="keio">
+      <div class="card-head">
+        <span class="icon" style="background:#e60039">🚌</span>
+        <div>
+          <h2>京王バス</h2>
+          <p class="route">各系統</p>
+        </div>
+      </div>
+      <p class="desc">京王バスの公式サイトから、運行情報・遅延情報やバスの現在地（バスなび）を確認できます。</p>
+      <a class="btn" href="https://www.keio-bus.com/"
+         target="_blank" rel="noopener" data-key="keio">
+        京王バス 公式サイトを見る ↗
+      </a>
+      <p class="last-visit" data-key="keio">まだ確認していません</p>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p>
+      ⚠️ このサイトは各社公式ページへのリンク集です。遅延状況の自動取得・自動更新は行っていません。<br>
+      最新の運行情報は、必ずリンク先の公式サイトでご確認ください。
+    </p>
+    <p class="clock" id="clock"></p>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>
