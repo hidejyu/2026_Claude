@@ -7,26 +7,38 @@ jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: JR East - kanto.aspx
+      - name: JR East - with browser-like headers
         run: |
-          echo "--- status ---"
-          curl -sS -o /tmp/jreast.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://traininfo.jreast.co.jp/train_info/kanto.aspx" || true
-          echo "--- first 3000 chars ---"
-          head -c 3000 /tmp/jreast.html || true
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+          echo "--- kanto.aspx ---"
+          curl -sS -A "$UA" -H "Accept-Language: ja,en;q=0.8" -H "Referer: https://www.jreast.co.jp/" \
+            -o /tmp/jreast.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" \
+            "https://traininfo.jreast.co.jp/train_info/kanto.aspx" || true
+          echo "--- grep 中央 / 湘南新宿 / JSON-looking ---"
+          grep -o '.\{80\}中央.\{80\}' /tmp/jreast.html | head -5 || true
+          grep -o '.\{80\}湘南新宿.\{80\}' /tmp/jreast.html | head -5 || true
+          echo "--- first 1500 chars (in case blocked) ---"
+          head -c 1500 /tmp/jreast.html || true
 
-      - name: JR East - possible json endpoint
+      - name: JR East - jreast.co.jp top (find real train_info link)
         run: |
-          curl -sS -o /tmp/jreast.json -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://traininfo.jreast.co.jp/train_info/json/kanto.json" || true
-          head -c 3000 /tmp/jreast.json || true
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+          curl -sS -A "$UA" -o /tmp/jreast_top.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://www.jreast.co.jp/" || true
+          grep -o 'href="[^"]*train_info[^"]*"' /tmp/jreast_top.html | sort -u | head -20 || true
+          grep -o 'href="[^"]*unkou[^"]*"' /tmp/jreast_top.html | sort -u | head -20 || true
 
-      - name: TWR (Rinkai Line)
+      - name: TWR (Rinkai Line) - find operation status section
         run: |
           curl -sS -o /tmp/twr.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://www.twr.co.jp/" || true
-          echo "--- first 3000 chars ---"
-          head -c 3000 /tmp/twr.html || true
+          echo "--- grep 運行情報 / 遅延 / 平常 ---"
+          grep -o '.\{100\}運行情報.\{150\}' /tmp/twr.html | head -5 || true
+          grep -o '.\{60\}平常.\{60\}' /tmp/twr.html | head -5 || true
+          grep -o 'href="[^"]*unkou[^"]*"' /tmp/twr.html | sort -u | head -10 || true
+          grep -o 'href="[^"]*untenjoho[^"]*"' /tmp/twr.html | sort -u | head -10 || true
 
-      - name: Keio Bus
+      - name: Keio Bus - find operation status page link
         run: |
           curl -sS -o /tmp/keio.html -w "HTTP:%{http_code} SIZE:%{size_download}\n" "https://www.keio-bus.com/" || true
-          echo "--- first 3000 chars ---"
-          head -c 3000 /tmp/keio.html || true
+          echo "--- grep 運行情報 / 遅延 ---"
+          grep -o '.\{80\}運行情報.\{120\}' /tmp/keio.html | head -10 || true
+          grep -o 'href="[^"]*"' /tmp/keio.html | grep -iE "unkou|jouhou|info|status" | sort -u | head -20 || true
